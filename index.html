@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<body>
+    <h1>Todo List</h1>
+
+    <!-- Form to add a new todo -->
+    <form action="/todo/create" method="POST">
+        <input type="text" name="title" placeholder="Enter todo title" required>
+        <button type="submit">Add Todo</button>
+    </form>
+
+    <h2>Current Todos</h2>
+    <ul>
+        {{range .}}
+        <li>
+            {{if .Done}}<s>{{.Title}}</s>{{else}}{{.Title}}{{end}}
+            <a href="/todo/toggle?id={{.ID}}">[Toggle Done]</a>
+            <a href="/todo/delete?id={{.ID}}">[Delete]</a>
+        </li>
+        {{else}}
+        <p>No todos yet!</p>
+        {{end}}
+    </ul>
+</body>
+</html>
