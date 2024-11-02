@@ -3,28 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>Weekly Todo List</title>
+    <style>
+        /* Set up a grid for the weekly layout */
+        .week-grid {
+            display: flex;
+            justify-content: space-between;
+        }
+        .day-column {
+            width: 13%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .day-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .todo-item {
+            list-style-type: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+        .todo-item.done {
+            text-decoration: line-through;
+        }
+        .actions {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Todo List</h1>
+    <h1>Todo List for the Week</h1>
 
-    <!-- Form to add a new todo -->
-    <form action="/todo/create" method="POST">
-        <input type="text" name="title" placeholder="Enter todo title" required>
-        <button type="submit">Add Todo</button>
-    </form>
-
-    <h2>Current Todos</h2>
-    <ul>
+    <!-- Weekly grid layout -->
+    <div class="week-grid">
         {{range .}}
-        <li>
-            {{if .Done}}<s>{{.Title}}</s>{{else}}{{.Title}}{{end}}
-            <a href="/todo/toggle?id={{.ID}}">[Toggle Done]</a>
-            <a href="/todo/delete?id={{.ID}}">[Delete]</a>
-        </li>
-        {{else}}
-        <p>No todos yet!</p>
+        <div class="day-column">
+            <!-- Day title with date -->
+            <div class="day-title">{{.Date.Format "Monday"}}<br>{{.Date.Format "Jan 2, 2006"}}</div>
+
+            <!-- Display todos for this day with toggle and delete options -->
+            <ul>
+                {{range .Todos}}
+                <li class="todo-item {{if .Done}}done{{end}}">
+                    {{.Title}}
+                    <a href="/todo/toggle?id={{.ID}}" class="actions">[Toggle]</a>
+                    <a href="/todo/delete?id={{.ID}}" class="actions">[Delete]</a>
+                </li>
+                {{else}}
+                <p>No todos for this day</p>
+                {{end}}
+            </ul>
+
+            <!-- Form to add a new todo for this specific day -->
+            <form action="/todo/create" method="POST">
+                <input type="hidden" name="date" value="{{.Date.Format "2006-01-02"}}">
+                <input type="text" name="title" placeholder="Enter todo title" required>
+                <button type="submit">Add Todo</button>
+            </form>
+        </div>
         {{end}}
-    </ul>
+    </div>
 </body>
 </html>
